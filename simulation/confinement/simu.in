@@ -1,0 +1,39 @@
+units           lj                              
+boundary        p p f                           
+atom_style      angle                           
+bond_style      fene                            
+special_bonds   fene                            
+                                                
+pair_style      lj/cut 1.122                    
+pair_modify     shift yes                       
+                                                
+angle_style     hybrid tangentialpropulsion cosine
+read_data       polymers.dat group polymers	
+read_data       wall.dat add append group wall  
+fix walls all wall/lj126 zlo EDGE 1.0 1.0 1.122 zhi EDGE 1.0 1.0 1.122
+displace_atoms  polymers move -6 2 3 units box
+neighbor        0.4 bin                  
+neigh_modify    check yes delay 0        
+comm_modify     mode single cutoff 2.    
+group polymers  type 1                   
+group wall type 2
+neigh_modify    exclude molecule/inter polymers  
+neigh_modify    exclude group wall wall 
+bond_coeff      1 300.0 1.5 10.0 1.0      
+pair_coeff      * * 10.0 1.0             
+angle_coeff     1 tangentialpropulsion PE                     
+angle_coeff 	2 cosine KAPPA 			 
+write_data      initial_config.dat
+fix             1 polymers nve                
+fix             2 polymers langevin TEMP TEMP 0.05 SEED  
+fix	        3 polymers gravity 1 vector 0 0 -1.  
+thermo_style    custom step time temp epair ebond pe etotal  
+thermo          100000                       
+timestep        0.001                    
+restart         100000 poly_sim.restart1 poly_sim.restart2  
+dump            1 all custom 100000 PolymGravity_simu.lammpstrj id type xu yu zu
+dump_modify     1 format line "%d %d %.6f %.6f %.6f %d %d %d"  
+dump_modify     1 sort id                
+dump_modify     1 pad 10		 
+run             1000000000               
+write_data      Final_config.dat

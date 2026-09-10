@@ -1,0 +1,8 @@
+numpy==2.2.6
+pandas==2.3.0
+scipy==1.15.3
+matplotlib==3.10.3
+cmocean==3.0.3
+MDAnalysis==2.9.0
+joblib
+tqdm==4.67.1

@@ -1,0 +1,32 @@
+units           lj                              
+boundary        p p p                           
+atom_style      angle                           
+bond_style      fene                            
+special_bonds   fene                            
+                                                
+                                                
+pair_style      lj/cut 1.122                    
+pair_modify     shift yes                       
+                                                
+angle_style	hybrid tangentialpropulsion cosine
+read_data       polymers.dat group polymers	
+neighbor        0.4 bin                  
+neigh_modify    check yes delay 0        
+comm_modify     mode single cutoff 2.    
+group polymers  type 1                   
+neigh_modify    exclude molecule/inter polymers  
+bond_coeff      1 300.0 1.5 10.0 1.0     
+pair_coeff      * * 10.0 1.0             
+angle_coeff     1 tangentialpropulsion 0.                     
+angle_coeff 	2 cosine 0. 			 
+fix             1 polymers nve                
+fix             2 polymers langevin 1.0 1.0 0.05 1 
+minimize        1.0e-4 1.0e-6 1000 10000   
+thermo_style    custom step time temp epair ebond pe etotal  
+thermo          100000                       
+timestep        0.001                    
+restart         1000 poly_eq_1.restart1 poly_eq_1.restart2  
+dump            1 all custom 10000 PolymGravity_1_eq.lammpstrj id type xu yu zu ix iy iz  
+dump_modify     1 sort id                
+run             500000                  
+write_data      poly_eq_1.dat nocoeff    
