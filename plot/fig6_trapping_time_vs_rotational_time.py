@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from common import (CMAP_ACTIVITY, F_SIM_TO_NN, LAB_FA_NN, LAB_TROT, LAB_TTRAP, YLIM_TRAP, add_exp_markers,
-                    add_slope_guide, exp_table, save, set_log_ticks, set_style, sim_table, timescale_filter)
+                    add_slope_guide, exp_table, record, save, set_log_ticks, set_style, sim_table, timescale_filter)
 
 
 def main():
@@ -22,6 +22,10 @@ def main():
     y_prop = 10 ** (np.log10(y_anc) + np.log10(x_prop) - np.log10(x_anc))
     ax.text(x_prop * 0.6, y_prop * 1.4, r"$\propto \tau_{\theta}$", fontsize=13, color="0.25", ha="right", va="bottom")
     add_exp_markers(ax, exp["tau_rot"], exp["ttrap"], exp["T_celsius"], legend=True)
+    record("D", "model", tau_theta_min=trot[show], tau_tr_min=ttrap[show], fa_nN=c[show],
+           kappa_over_uE=sim["kappa"].values[show], T_star=sim["T"].values[show])
+    record("D", "living worms", tau_theta_min=exp["tau_rot"], tau_tr_min=exp["ttrap"],
+           temperature_C=exp["T_celsius"])
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.set_ylim(*YLIM_TRAP)

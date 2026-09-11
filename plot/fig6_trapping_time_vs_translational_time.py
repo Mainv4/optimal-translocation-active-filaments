@@ -3,7 +3,7 @@ import numpy as np
 
 from common import (CMAP_ACTIVITY, CMAP_KAPPA, EXP_EDGE_LW, EXP_MARKER, F_SIM_TO_NN, LAB_FA_NN, LAB_KAPPA, LAB_TSAT,
                     LAB_TTRAP, TEMP_COLORS, TEMPERATURES, YLIM_TRAP, activity_bins, activity_color, add_exp_markers,
-                    add_slope_guide, exp_msd, exp_saturation_times, exp_table, save, set_style, sim_table,
+                    add_slope_guide, exp_msd, exp_saturation_times, exp_table, record, save, set_style, sim_table,
                     timescale_filter)
 
 FIT_LOG_A = -15.007
@@ -16,7 +16,7 @@ def tau_inf_fit(f_nN):
     return np.exp(FIT_LOG_A) * (np.asarray(f_nN) * 1e-9) ** FIT_ALPHA
 
 
-def draw(ax, sim, exp, tau_sat_exp, color_by="Pe", decorations=True):
+def draw(ax, sim, exp, tau_sat_exp, color_by="Pe", decorations=True, panel="E"):
     tsat, ttrap, Pe = sim["tau_trans"].values, sim["ttrap"].values, sim["Pe"].values
     if color_by == "kappa":
         c, cmap, label = sim["kappa"].values, CMAP_KAPPA, LAB_KAPPA
@@ -51,6 +51,16 @@ def draw(ax, sim, exp, tau_sat_exp, color_by="Pe", decorations=True):
         ins.set_ylim(0, 5.5)
         ins.tick_params(labelsize=10)
     add_exp_markers(ax, [tau_sat_exp[T] for T in TEMPERATURES], exp["ttrap"], exp["T_celsius"])
+    record(panel, "model", tau_d_min=tsat[show], tau_tr_min=ttrap[show], fa_nN=Pe[show] * F_SIM_TO_NN,
+           kappa_over_uE=sim["kappa"].values[show], T_star=sim["T"].values[show])
+    record(panel, "living worms", tau_d_min=[tau_sat_exp[T] for T in TEMPERATURES], tau_tr_min=exp["ttrap"],
+           temperature_C=exp["T_celsius"])
+    if decorations:
+        for b in bins:
+            record(panel + " inset", "model, activity bin mean", fa_nN=b["Pe_med"] * F_SIM_TO_NN,
+                   tau_tr_inf_min=b["tau_inf"], n_runs=int(b["on_plateau"].sum()))
+        for T, (f_nN, tau_min) in EXP_TAU_INF.items():
+            record(panel + " inset", "living worms", fa_nN=f_nN, tau_tr_inf_min=tau_min, temperature_C=T)
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.set_ylim(*YLIM_TRAP)
@@ -59,14 +69,14 @@ def draw(ax, sim, exp, tau_sat_exp, color_by="Pe", decorations=True):
     return sc, label
 
 
-def main(color_by="Pe", decorations=True, name="fig6_trapping_time_vs_translational_time"):
+def main(color_by="Pe", decorations=True, name="fig6_trapping_time_vs_translational_time", panel="E"):
     set_style()
     sim = timescale_filter(sim_table())
     exp = exp_table()
     _, tau_sat_exp = exp_saturation_times(exp_msd())
     fig = plt.figure(figsize=(5.4, 4.2))
     ax = fig.add_axes([0.14, 0.14, 0.70, 0.82])
-    sc, label = draw(ax, sim, exp, tau_sat_exp, color_by, decorations)
+    sc, label = draw(ax, sim, exp, tau_sat_exp, color_by, decorations, panel)
     fig.colorbar(sc, cax=fig.add_axes([0.86, 0.14, 0.03, 0.82])).set_label(label)
     save(fig, name)
 

@@ -3,7 +3,8 @@ import numpy as np
 import pandas as pd
 from matplotlib.lines import Line2D
 
-from common import CALIBRATED, DATA, TEMP_COLORS, TEMP_COLORS_SIM, TEMP_LABELS, TEMPERATURES, save, set_style_framed
+from common import (CALIBRATED, DATA, TEMP_COLORS, TEMP_COLORS_SIM, TEMP_LABELS, TEMPERATURES, record, save,
+                    set_style_framed)
 
 MATCH_INTERVAL = (10, 50)
 S = 2.2 / 1.5
@@ -20,10 +21,12 @@ def main():
         times = np.arange(len(msd))
         v = (times > 0) & (msd > 0)
         ax.plot(times[v], msd[v], color=TEMP_COLORS_SIM[T], lw=1.5 * S, ls="--", zorder=4)
+        record("A", f"model {T} C", t_s=times[v], msd_mm2=msd[v])
         exp = pd.read_csv(DATA / "exp" / "free_space" / f"{T}C_msd.csv")
         te, me = exp["t"].values, exp["msd"].values
         v = np.isfinite(me) & (me > 0) & (te > 0)
         ax.plot(te[v], me[v], color=TEMP_COLORS[T], lw=2.0 * S, ls="-", zorder=3)
+        record("A", f"living worms {T} C", t_s=te[v], msd_mm2=me[v])
         handles.append(Line2D([0], [0], color=TEMP_COLORS[T], lw=2 * S, ls="-", label=TEMP_LABELS[T] + " exp"))
         handles.append(Line2D([0], [0], color=TEMP_COLORS_SIM[T], lw=1.5 * S, ls="--",
                               label=TEMP_LABELS[T] + rf" sim ($f^a\!=\!{pe},\;T\!=\!{t},\;\kappa\!=\!{k}$)"))

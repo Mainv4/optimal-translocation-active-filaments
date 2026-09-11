@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from common import (CALIBRATED, LAB_T_C, TEMP_COLORS, TEMPERATURES, exp_trapping_events, fit_exponential_log_space,
-                    log_bins, save, set_style_framed, sim_trapping_events)
+                    log_bins, record, save, set_style_framed, sim_trapping_events)
 from fig4_trapping_time_distributions_temperature import TRAP_CUTOFF, TRAP_NBINS
 
 MARKER_PT = 7
@@ -19,8 +19,12 @@ def main():
                     markersize=MARKER_PT, capsize=4, lw=1.5, zorder=3)
         ax.plot(T, tau, marker="s", color=TEMP_COLORS[T], markersize=MARKER_PT, markerfacecolor="white",
                 markeredgewidth=1.5, zorder=3)
+        record("D", "living worms", temperature_C=T, mean_tau_tr_min=np.mean(times),
+               standard_error_min=np.std(times) / np.sqrt(len(times)), fitted_tau_c_min=tau, n_events=len(times))
         sim_times = sim_trapping_events(40, *CALIBRATED[T], TRAP_CUTOFF)
         tau_sim, tau_sim_err, _ = fit_exponential_log_space(sim_times, bins)
+        record("D", "model", temperature_C=T, fitted_tau_c_min=tau_sim, fit_error_min=tau_sim_err,
+               n_events=len(sim_times))
         ax.errorbar(T, tau_sim, yerr=tau_sim_err, marker="D", color=TEMP_COLORS[T], markersize=MARKER_PT,
                     markerfacecolor="none", markeredgewidth=1.5, capsize=2, lw=1.0, ls="none", zorder=4)
     ax.set_xlabel(LAB_T_C)

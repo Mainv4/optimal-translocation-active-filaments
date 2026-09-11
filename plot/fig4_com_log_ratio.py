@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from common import TEMPERATURES, exp_cavity_files, save, set_style_framed
+from common import TEMPERATURES, exp_cavity_files, record, save, set_style_framed
 
 DEVICE_LENGTH = 96.0
 HALF_DEVICE = 48.0
@@ -40,6 +40,7 @@ def main():
         ratio = np.full_like(h, np.nan)
         ratio[valid] = np.log(h[valid] / h20[valid])
         ax.bar(centers, ratio, centers[1] - centers[0], color=PANEL_COLORS[T], edgecolor="white", linewidth=0.5)
+        record("A", f"living worms {T} C over 20 C", x_cm_mm=centers, log_probability_ratio=ratio)
         ax.axvline(0, color="0.7", ls="--", lw=1.5)
         ax.axvline(CAVITY_BOUNDARY, color="0.7", ls="--", lw=1.5)
         ax.axhline(0, color="0.5", lw=0.8)

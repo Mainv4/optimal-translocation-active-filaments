@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from common import (CMAP_ACTIVITY, F_SIM_TO_NN, LAB_FA_NN, LAB_H, LAB_KAPPA, paper_filter, save,
+from common import (CMAP_ACTIVITY, F_SIM_TO_NN, LAB_FA_NN, LAB_H, LAB_KAPPA, paper_filter, record, save,
                     set_style, sim_table)
 
 
@@ -11,6 +11,8 @@ def main():
     ax = fig.add_axes([0.15, 0.15, 0.66, 0.80])
     sc = ax.scatter(sim["kappa"], sim["H_conf"], c=sim["Pe"] * F_SIM_TO_NN, cmap=CMAP_ACTIVITY,
                     s=34, marker="D", alpha=0.80, edgecolors="none", zorder=2)
+    record("-", "model", kappa_over_uE=sim["kappa"], shannon_entropy_H=sim["H_conf"],
+           fa_nN=sim["Pe"] * F_SIM_TO_NN, T_star=sim["T"])
     ax.set_xlabel(LAB_KAPPA)
     ax.set_ylabel(LAB_H)
     ax.set_box_aspect(1)

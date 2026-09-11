@@ -3,8 +3,9 @@ import numpy as np
 from matplotlib.colors import TwoSlopeNorm
 from matplotlib.gridspec import GridSpec
 
-from common import (DATA, LAB_RE, LAB_RG, RE_RANGE, RG_RANGE, SMOOTH_SIGMA, TEMPERATURES, confmap_density,
-                    filter_by_envelope, load_boundaries, read_rere_csv, save, set_style_framed)
+from common import (DATA, LAB_RE, LAB_RG, RE_RANGE, RG_RANGE, SMOOTH_SIGMA, TEMPERATURES, confmap_centres,
+                    confmap_density, filter_by_envelope, load_boundaries, read_rere_csv, record, save,
+                    set_style_framed)
 
 VMAX_RATIO = 0.8
 LABELS = {T: rf"$T = {T}\,^{{\circ}}$C" for T in TEMPERATURES}
@@ -33,6 +34,10 @@ def main():
         ratio = np.where(np.isnan(ratio), np.nan, np.clip(ratio, -VMAX_RATIO, VMAX_RATIO))
         mesh = ax.imshow(ratio.T, origin="lower", extent=[*RG_RANGE, *RE_RANGE], aspect="auto", cmap=cmap,
                          norm=norm, interpolation="nearest")
+        RG, RE = confmap_centres()
+        keep = np.isfinite(ratio)
+        record("B", f"living worms {T} C over 20 C", Rg_over_lc=RG[keep], Re_over_lc=RE[keep],
+               log10_probability_ratio=ratio[keep])
         ax.plot(circ_rg, circ_re, "-", color="0.4", lw=1.5)
         ax.plot(min_rg, min_re, "-", color="0.4", lw=1.5)
         ax.set_xlim(RG_RANGE)

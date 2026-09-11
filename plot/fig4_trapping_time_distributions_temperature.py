@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from common import (LAB_P_TTRAP, LAB_TTRAP, TEMP_COLORS, TEMPERATURES, exp_trapping_events, fit_exponential_log_space,
-                    log_bins, save, set_style_framed)
+                    log_bins, record, save, set_style_framed)
 
 TRAP_CUTOFF = 15.0
 TRAP_NBINS = 28
@@ -24,6 +24,8 @@ def main():
                    alpha=0.85, edgecolors="black", linewidths=0.5, zorder=3)
         tau, _, A = fit_exponential_log_space(times, bins)
         ax.plot(x_fit, A * np.exp(-x_fit / tau), "--", color=TEMP_COLORS[T], lw=1.5, zorder=2)
+        record("C", f"living worms {T} C", tau_tr_min=centers[pos], probability_density_per_min=counts[pos],
+               fitted_tau_c_min=tau)
     ax.set_yscale("log")
     ax.set_xlabel(LAB_TTRAP)
     ax.set_ylabel(LAB_P_TTRAP)

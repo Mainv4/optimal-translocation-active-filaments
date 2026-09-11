@@ -15,9 +15,11 @@ def main():
     ax_sim = fig.add_subplot(gs[0, 1], sharey=ax_exp)
     cax = fig.add_subplot(gs[0, 2])
     re, rg = read_rere_csv(DATA / "exp" / "cavity" / "ReRg_20.csv")
-    draw_confmap(ax_exp, re, rg, env, smooth_sigma=SMOOTH_SIGMA, boundary_color=C_EXP, label=r"Exp $20\,^\circ$C conf.")
+    draw_confmap(ax_exp, re, rg, env, smooth_sigma=SMOOTH_SIGMA, boundary_color=C_EXP, label=r"Exp $20\,^\circ$C conf.",
+                 panel="F", series="living worms 20 C")
     re, rg = filter_by_envelope(*read_confmap_npy(DATA / "sim" / "confinement" / "conformations" / f"Pe_{PE}_T_{T_SIM}_k_{K}.npy"), env)
-    mesh = draw_confmap(ax_sim, re, rg, env, boundary_color=C_SIM, label=r"Sim $20\,^\circ$C conf.")
+    mesh = draw_confmap(ax_sim, re, rg, env, boundary_color=C_SIM, label=r"Sim $20\,^\circ$C conf.",
+                        panel="F", series=f"model fa={PE} T={T_SIM} kappa={K}")
     ax_exp.set_xlabel(LAB_RG)
     ax_exp.set_ylabel(LAB_RE)
     ax_exp.set_xticks([t for t in ax_exp.get_xticks() if t < RG_RANGE[1] - 0.01])

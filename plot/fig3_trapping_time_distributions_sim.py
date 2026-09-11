@@ -15,7 +15,8 @@ def main():
     fig, ax = plt.subplots()
     for N, lc in N_TO_LENGTH.items():
         times = sim_trapping_events(N, *CANDIDATE, MAX_TRAP_TIME)
-        draw_distribution(ax, times, bins, rf"$\ell_c \simeq {lc}$ mm ($N={N}$)", SIM_COLORS[N], SIM_MARKERS[N])
+        draw_distribution(ax, times, bins, rf"$\ell_c \simeq {lc}$ mm ($N={N}$)", SIM_COLORS[N], SIM_MARKERS[N],
+                          "B", f"model N={N} (lc = {lc} mm)")
     finish(ax, MAX_TRAP_TIME)
     fig.tight_layout()
     save(fig, "fig3_trapping_time_distributions_sim")

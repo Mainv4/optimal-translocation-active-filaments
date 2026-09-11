@@ -87,6 +87,9 @@ def set_log_ticks(ax, axis, ticks, powers=False):
 
 
 def save(fig, name):
+    if _source_data is not None:
+        plt.close(fig)
+        return
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for ext in ("png", "svg"):
         fig.savefig(OUTPUT / f"{name}.{ext}", dpi=DPI, bbox_inches="tight")
@@ -294,9 +297,20 @@ def confmap_density(re, rg, env, smooth_sigma=0.0):
     return density, mask
 
 
-def draw_confmap(ax, re, rg, env, smooth_sigma=0.0, boundary_color="0.5", label=None):
+def confmap_centres():
+    rg_e = np.linspace(*RG_RANGE, CONFMAP_BINS + 1)
+    re_e = np.linspace(*RE_RANGE, CONFMAP_BINS + 1)
+    return np.meshgrid(0.5 * (rg_e[:-1] + rg_e[1:]), 0.5 * (re_e[:-1] + re_e[1:]), indexing="ij")
+
+
+def draw_confmap(ax, re, rg, env, smooth_sigma=0.0, boundary_color="0.5", label=None,
+                 panel=None, series=None):
     from matplotlib.colors import LogNorm
     density, _ = confmap_density(re, rg, env, smooth_sigma)
+    if panel is not None:
+        RG, RE = confmap_centres()
+        keep = density > 0
+        record(panel, series, Rg_over_lc=RG[keep], Re_over_lc=RE[keep], probability=density[keep])
     im = ax.imshow(density.T, origin="lower", extent=[*RG_RANGE, *RE_RANGE], aspect="auto",
                    norm=LogNorm(vmin=CONFMAP_VMIN, vmax=CONFMAP_VMAX), cmap=CONFMAP_CMAP)
     circ_rg, circ_re, min_rg, min_re = env
@@ -355,3 +369,35 @@ def fit_exponential_log_space(times, bins):
 
 def exp_cavity_files():
     return sorted((DATA / "exp" / "cavity").glob("*/worm_*.csv"))
+
+
+_source_data = None
+
+
+def source_data_begin():
+    global _source_data
+    _source_data = []
+
+
+def record(panel, series, **columns):
+    if _source_data is None:
+        return
+    cols = {}
+    for key, value in columns.items():
+        arr = np.atleast_1d(np.asarray(value, dtype=float)).ravel()
+        cols[key] = arr
+    n = max(len(arr) for arr in cols.values())
+    cols = {k: (v if len(v) == n else np.full(n, v[0])) for k, v in cols.items()}
+    frame = pd.DataFrame(cols)
+    frame.insert(0, "series", series)
+    frame.insert(0, "panel", panel)
+    _source_data.append(frame)
+
+
+def source_data_write(path):
+    global _source_data
+    frame = pd.concat(_source_data, ignore_index=True)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    frame.to_csv(path, index=False, float_format="%.6g")
+    _source_data = None
+    return len(frame), list(frame.columns)

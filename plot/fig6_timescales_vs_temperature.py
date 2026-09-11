@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from common import LAB_T_C, TEMPERATURES, exp_msd, exp_saturation_times, exp_table, save, set_style
+from common import LAB_T_C, TEMPERATURES, exp_msd, exp_saturation_times, exp_table, record, save, set_style
 
 COLOR_ROT = "#4C72B0"
 COLOR_SAT = "#C44E52"
@@ -14,6 +14,7 @@ def main():
     T = exp["T_celsius"].values.astype(float)
     tau_rot_s = exp["tau_rot"].values.astype(float) * 60.0
     tau_sat_s = np.array([tau_sat[int(t)] for t in T]) * 60.0
+    record("C", "living worms", temperature_C=T, tau_theta_s=tau_rot_s, tau_d_s=tau_sat_s)
     fig, ax = plt.subplots(figsize=(4.8, 4.2))
     ax.plot(T, tau_rot_s, marker="s", ms=9, lw=1.2, color=COLOR_ROT, zorder=3)
     ax.set_xlabel(LAB_T_C)

@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 from common import (LAB_MSD_TR, LAB_T_MIN, PLATEAU_WINDOW_MIN, TEMP_COLORS, TEMP_LABELS, TEMPERATURES,
-                    exp_msd, exp_saturation_times, save, set_log_ticks, set_style)
+                    exp_msd, exp_saturation_times, record, save, set_log_ticks, set_style)
 
 
 def main():
@@ -13,6 +13,8 @@ def main():
         m = msd[T]["trans"]
         ax.plot(m[:, 0], m[:, 1], lw=1.8, color=TEMP_COLORS[T], label=TEMP_LABELS[T], zorder=3)
         ax.plot(list(PLATEAU_WINDOW_MIN), [plateau[T]] * 2, ls=":", lw=1.2, color=TEMP_COLORS[T], zorder=2)
+        record("B", f"living worms {T} C", t_min=m[:, 0], translational_msd_mm2=m[:, 1],
+               plateau_mm2=plateau[T], tau_d_min=tau_sat[T])
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.set_xlabel(LAB_T_MIN)

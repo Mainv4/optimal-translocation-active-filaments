@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.lines import Line2D
 
-from common import LAB_LC, LAB_TTRAP, exp_trapping_events, save, set_style_framed, sim_trapping_events
+from common import LAB_LC, LAB_TTRAP, exp_trapping_events, record, save, set_style_framed, sim_trapping_events
 
 CANDIDATE = (0.4, 0.05, 0.4)
 N_TO_LENGTH = {40: 20, 50: 25, 60: 30}
@@ -41,6 +41,11 @@ def main():
     set_style_framed()
     exp = group_by_length(exp_trapping_events(20, MAX_TRAP_TIME))
     sim = {N: sim_trapping_events(N, *CANDIDATE, MAX_TRAP_TIME) for N in N_TO_LENGTH}
+    for lc, times in exp:
+        record("C", f"living worms lc = {lc:.1f} mm", contour_length_mm=lc, tau_tr_min=times)
+    for N in N_TO_LENGTH:
+        if len(sim[N]) >= MIN_EVENTS:
+            record("C", f"model N={N}", contour_length_mm=N_TO_LENGTH[N] + 2.5, tau_tr_min=sim[N])
     fig, ax = plt.subplots(figsize=(7, 3.5))
     style_violin(ax.violinplot([g[1] for g in exp], positions=[g[0] for g in exp], widths=1.5,
                                showmeans=True, showmedians=False, showextrema=False), C_EXP, "black")

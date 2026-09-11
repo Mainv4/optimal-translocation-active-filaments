@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from common import LAB_LC, LAB_TTRAP, TEMP_COLORS, TEMPERATURES, exp_trapping_events, save, set_style_framed
+from common import LAB_LC, LAB_TTRAP, TEMP_COLORS, TEMPERATURES, exp_trapping_events, record, save, set_style_framed
 from fig3_trapping_time_vs_length import group_by_length
 
 MAX_TRAP_TIME = 15.0
@@ -14,6 +14,8 @@ def main():
     for ax, T in zip(axes, TEMPERATURES):
         groups = group_by_length(exp_trapping_events(T, MAX_TRAP_TIME))
         positions = [g[0] for g in groups]
+        for lc, times in groups:
+            record(f"{T} C", "living worms", contour_length_mm=lc, tau_tr_min=times)
         parts = ax.violinplot([g[1] for g in groups], positions=positions, widths=1.5,
                               showmeans=True, showmedians=True, showextrema=True)
         for body in parts["bodies"]:

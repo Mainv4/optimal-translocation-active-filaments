@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from common import (LAB_MSD_TR, LAB_T_MIN, PLATEAU_WINDOW_MIN, TEMP_COLORS, TEMP_LABELS, TEMPERATURES, crossing_time,
-                    exp_msd, plateau_in_window, save, set_style)
+                    exp_msd, plateau_in_window, record, save, set_style)
 
 
 def main():
@@ -16,6 +16,9 @@ def main():
         tau_d = crossing_time(m, plateau)
         window = (t >= PLATEAU_WINDOW_MIN[0]) & (t <= PLATEAU_WINDOW_MIN[1])
         spread = float(np.nanstd(y[window]))
+        record(f"{T} C", "living worms", t_min=t, translational_msd_mm2=y, plateau_mm2=plateau,
+               plateau_sd_mm2=spread, tau_d_min=tau_d, window_start_min=PLATEAU_WINDOW_MIN[0],
+               window_end_min=PLATEAU_WINDOW_MIN[1])
         ax.axvspan(*PLATEAU_WINDOW_MIN, color="0.85", lw=0, zorder=0)
         ax.axhline(plateau, ls="--", lw=1.4, color=TEMP_COLORS[T], zorder=2)
         ax.axhspan(plateau - spread, plateau + spread, color=TEMP_COLORS[T], alpha=0.25, lw=0, zorder=1)

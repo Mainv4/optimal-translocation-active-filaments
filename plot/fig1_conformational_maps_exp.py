@@ -32,7 +32,7 @@ def main():
     for ax, T in zip(axes, TEMPERATURES):
         re, rg = read_rere_csv(DATA / "exp" / "free_space" / f"ReRg_{T}.csv")
         mesh = draw_confmap(ax, re, rg, env, smooth_sigma=SMOOTH_SIGMA, boundary_color=TEMP_COLORS[T],
-                            label=f"Exp {TEMP_LABELS[T]}")
+                            label=f"Exp {TEMP_LABELS[T]}", panel="B", series=f"living worms {T} C")
     colorbar(fig, mesh, cax)
     save(fig, "fig1_conformational_maps_exp")
 

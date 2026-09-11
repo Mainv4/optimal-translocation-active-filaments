@@ -4,13 +4,15 @@ import pandas as pd
 from matplotlib.colors import BoundaryNorm, ListedColormap
 from matplotlib.gridspec import GridSpec
 
-from common import DATA, LAB_RE, LAB_RG, RE_RANGE, RG_RANGE, TEMP_LABELS, TEMPERATURES, load_boundaries, save, set_style_framed
+from common import (DATA, LAB_RE, LAB_RG, RE_RANGE, RG_RANGE, TEMP_LABELS, TEMPERATURES, load_boundaries, record,
+                    save, set_style_framed)
 
 CAVITY_EDGE = 40.0
 L_B = 80.0
 BIN_EDGES = [0.2, 0.3, 0.4]
 CAT_LABELS = ["Trapped", r"$<0.2$", r"$0.2$–$0.3$", r"$0.3$–$0.4$", r"$>0.4$"]
 CAT_COLORS = ["#e41a1c", "#377eb8", "#4daf4a", "#ffff33", "#984ea3"]
+PANEL_KEYS = ["10 C", "20 C", "30 C"]
 CMAP_CAT = ListedColormap(CAT_COLORS)
 NORM_CAT = BoundaryNorm(np.arange(-0.5, 5.5, 1.0), CMAP_CAT.N)
 
@@ -44,6 +46,7 @@ def row_figure(panels, env, name):
     fig = plt.figure(figsize=(11, 3.6))
     gs = GridSpec(1, 4, width_ratios=[1, 1, 1, 0.06], wspace=0)
     for col, (label, re, rg, cat) in enumerate(panels):
+        record(PANEL_KEYS[col], "living worms" if name.endswith("exp") else "model", Rg_over_lc=rg, Re_over_lc=re, position_class=cat)
         ax = fig.add_subplot(gs[0, col])
         for c in range(5):
             m = cat == c

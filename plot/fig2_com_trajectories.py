@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from common import DATA, exp_cavity_files, save, set_style_framed
+from common import DATA, exp_cavity_files, record, save, set_style_framed
 
 PE, T_SIM, K = 0.5, 0.2, 0.8
 TARGET_T = 20
@@ -80,7 +80,7 @@ def best_pair(sim_segmented, exp_segmented):
     return best
 
 
-def draw_trajectory(ax, segments, color, frame_to_min, t_min_cutoff):
+def draw_trajectory(ax, segments, color, frame_to_min, t_min_cutoff, panel=None, series=None):
     for seg in segments:
         t = seg[:, 0] * frame_to_min
         keep = t >= t_min_cutoff
@@ -88,6 +88,7 @@ def draw_trajectory(ax, segments, color, frame_to_min, t_min_cutoff):
             continue
         t, x = t[keep], seg[keep, 1] + HALF_DEVICE
         ax.plot(t, x, lw=3, color=color)
+        record(panel, series, t_min=t, x_cm_mm=x) if panel else None
         mean_x = np.mean(seg[keep, 1])
         if mean_x < -L_MAX:
             ax.fill_between(t, -2, CAVITY_LEFT, color="silver", alpha=0.3)
@@ -115,10 +116,11 @@ def selected_pair():
 def main():
     set_style_framed()
     sim_segments, exp_segments = selected_pair()
-    for name, segments, color, scale, cutoff in (("fig2_com_trajectory_exp", exp_segments, C_EXP, EXP_FRAME_TO_MIN, 4.0),
-                                                  ("fig2_com_trajectory_sim", sim_segments, C_SIM, SIM_FRAME_TO_MIN, 3.0)):
+    layout = (("fig2_com_trajectory_exp", exp_segments, C_EXP, EXP_FRAME_TO_MIN, 4.0, "C", "living worm 20 C"),
+              ("fig2_com_trajectory_sim", sim_segments, C_SIM, SIM_FRAME_TO_MIN, 3.0, "D", "model 20 C"))
+    for name, segments, color, scale, cutoff, panel, series in layout:
         fig, ax = plt.subplots(figsize=(9, 3.5))
-        draw_trajectory(ax, segments, color, scale, cutoff)
+        draw_trajectory(ax, segments, color, scale, cutoff, panel, series)
         fig.tight_layout()
         save(fig, name)
 

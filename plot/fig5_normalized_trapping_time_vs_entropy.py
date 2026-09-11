@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from common import (CMAP_ACTIVITY, F_SIM_TO_NN, LAB_FA_NN, LAB_H, LAB_TTRAP_OVER_TAU_E0,
-                    add_exp_markers, exp_table, paper_filter, save, set_style, sim_table)
+                    add_exp_markers, exp_table, paper_filter, record, save, set_style, sim_table)
 
 
 def main():
@@ -20,6 +20,11 @@ def main():
                                   np.log10(sim["ttrap_norm"].values[positive]), 1)
     x_line = np.linspace(4.75, 5.8, 100)
     ax.plot(x_line, 10 ** (slope * x_line + intercept), ls="--", lw=1.3, color="0.25", zorder=4)
+    record("C", "model", shannon_entropy_H=sim["H_conf"], tau_tr_over_tau_e0=sim["ttrap_norm"],
+           fa_nN=sim["Pe"] * F_SIM_TO_NN, kappa_over_uE=sim["kappa"], T_star=sim["T"])
+    record("C", "living worms", shannon_entropy_H=exp["H_conf"],
+           tau_tr_over_tau_e0=exp["ttrap"] / exp["tau_decorr_free_unit"], temperature_C=exp["T_celsius"])
+    record("C", "log-linear fit", fit_slope_per_H=slope, fit_intercept=intercept)
     ax.set_yscale("log")
     ax.set_ylim(1e0, 1e2)
     ax.set_xlim(4.5, 6.25)
