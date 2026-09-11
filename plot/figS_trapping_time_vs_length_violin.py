@@ -15,7 +15,7 @@ def main():
         groups = group_by_length(exp_trapping_events(T, MAX_TRAP_TIME))
         positions = [g[0] for g in groups]
         for lc, times in groups:
-            record(f"{T} C", "living worms", contour_length_mm=lc, tau_tr_min=times)
+            record(f"{T}C", "living worms", contour_length_mm=lc, tau_tr_min=times)
         parts = ax.violinplot([g[1] for g in groups], positions=positions, widths=1.5,
                               showmeans=True, showmedians=True, showextrema=True)
         for body in parts["bodies"]:

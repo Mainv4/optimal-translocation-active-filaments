@@ -16,7 +16,7 @@ def main():
         tau_d = crossing_time(m, plateau)
         window = (t >= PLATEAU_WINDOW_MIN[0]) & (t <= PLATEAU_WINDOW_MIN[1])
         spread = float(np.nanstd(y[window]))
-        record(f"{T} C", "living worms", t_min=t, translational_msd_mm2=y, plateau_mm2=plateau,
+        record(f"{T}C", "living worms", t_min=t, translational_msd_mm2=y, plateau_mm2=plateau,
                plateau_sd_mm2=spread, tau_d_min=tau_d, window_start_min=PLATEAU_WINDOW_MIN[0],
                window_end_min=PLATEAU_WINDOW_MIN[1])
         ax.axvspan(*PLATEAU_WINDOW_MIN, color="0.85", lw=0, zorder=0)

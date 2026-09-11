@@ -57,7 +57,7 @@ def draw(ax, sim, exp, tau_sat_exp, color_by="Pe", decorations=True, panel="E"):
            temperature_C=exp["T_celsius"])
     if decorations:
         for b in bins:
-            record(panel + " inset", "model, activity bin mean", fa_nN=b["Pe_med"] * F_SIM_TO_NN,
+            record(panel + " inset", "model activity bin mean", fa_nN=b["Pe_med"] * F_SIM_TO_NN,
                    tau_tr_inf_min=b["tau_inf"], n_runs=int(b["on_plateau"].sum()))
         for T, (f_nN, tau_min) in EXP_TAU_INF.items():
             record(panel + " inset", "living worms", fa_nN=f_nN, tau_tr_inf_min=tau_min, temperature_C=T)

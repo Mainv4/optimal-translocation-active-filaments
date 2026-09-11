@@ -1,0 +1,10 @@
+series,temperature_C,fa_nN,tau_tr_inf_min,n_runs
+model activity bin mean,,30,4.69195,36
+model activity bin mean,,40,2.59169,8
+model activity bin mean,,50,2.14741,24
+model activity bin mean,,100,1.66563,29
+model activity bin mean,,120,1.23745,9
+model activity bin mean,,200,0.599743,2
+living worms,10,62.2,3,
+living worms,20,254.9,0.8,
+living worms,30,80.2,2.2,

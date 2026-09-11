@@ -394,10 +394,8 @@ def record(panel, series, **columns):
     _source_data.append(frame)
 
 
-def source_data_write(path):
+def source_data_frame():
     global _source_data
     frame = pd.concat(_source_data, ignore_index=True)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    frame.to_csv(path, index=False, float_format="%.6g")
     _source_data = None
-    return len(frame), list(frame.columns)
+    return frame

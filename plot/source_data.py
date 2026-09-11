@@ -1,7 +1,7 @@
 import importlib
 import zipfile
 
-from common import ROOT, source_data_begin, source_data_write
+from common import ROOT, source_data_begin, source_data_frame
 
 FIGURES = {
     "Figure_1": [("fig1_msd", {}),
@@ -42,21 +42,34 @@ FIGURES = {
 OUT = ROOT / "source_data"
 
 
+def panel_file(figure, panel):
+    if panel == "-":
+        return f"{figure}.csv"
+    return f"{figure}_{panel.replace(' ', '_')}.csv"
+
+
 def main():
+    OUT.mkdir(parents=True, exist_ok=True)
+    for path in OUT.glob("*.csv"):
+        path.unlink()
     written = []
     for figure, entries in FIGURES.items():
         source_data_begin()
         for module_name, kwargs in entries:
             importlib.import_module(module_name).main(**kwargs)
-        path = OUT / f"{figure}.csv"
-        rows, columns = source_data_write(path)
-        written.append(path)
-        print(f"{figure}: {rows} rows, {len(columns)} columns, {path.stat().st_size / 1e6:.2f} MB")
+        frame = source_data_frame()
+        for panel, block in frame.groupby("panel", sort=False):
+            block = block.drop(columns="panel").dropna(axis=1, how="all")
+            path = OUT / panel_file(figure, panel)
+            block.to_csv(path, index=False, float_format="%.6g")
+            written.append(path)
+            print(f"{path.name}: {len(block)} rows, {len(block.columns)} columns, "
+                  f"{path.stat().st_size / 1e6:.2f} MB")
     archive = ROOT / "source_data.zip"
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as z:
         for path in written:
             z.write(path, path.name)
-    print(f"source_data.zip: {archive.stat().st_size / 1e6:.2f} MB")
+    print(f"\n{len(written)} files, source_data.zip: {archive.stat().st_size / 1e6:.2f} MB")
 
 
 if __name__ == "__main__":

@@ -38,7 +38,7 @@ def main():
     XC, YC = np.meshgrid(xc, yc)
     H = np.ma.masked_where((XC ** 2 + YC ** 2 > CAVITY_RADIUS ** 2) | (H == 0), H)
     keep = ~np.ma.getmaskarray(H)
-    record("B inset", "living worms, all temperatures", x_mm=XC[keep], y_mm=YC[keep], counts=H.data[keep])
+    record("B inset", "living worms all temperatures", x_mm=XC[keep], y_mm=YC[keep], counts=H.data[keep])
     fig, ax = plt.subplots(figsize=(3.2, 3.0))
     ax.imshow(H, origin="lower", extent=[xe[0], xe[-1], ye[0], ye[-1]], cmap="viridis",
               norm=LogNorm(), aspect="equal", interpolation="nearest", zorder=1)

@@ -1,0 +1,7 @@
+series,fitted_tau_c_min,temperature_C,mean_tau_tr_min,standard_error_min,n_events,fit_error_min
+living worms,2.31329,10,2.55491,0.195701,173,
+model,2.967,10,,,120,0.267823
+living worms,1.29191,20,1.17069,0.0762885,282,
+model,1.20347,20,,,274,0.0581945
+living worms,2.3673,30,2.39331,0.153309,244,
+model,0.998398,30,,,345,0.05966

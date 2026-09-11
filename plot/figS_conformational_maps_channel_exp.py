@@ -12,7 +12,7 @@ L_B = 80.0
 BIN_EDGES = [0.2, 0.3, 0.4]
 CAT_LABELS = ["Trapped", r"$<0.2$", r"$0.2$–$0.3$", r"$0.3$–$0.4$", r"$>0.4$"]
 CAT_COLORS = ["#e41a1c", "#377eb8", "#4daf4a", "#ffff33", "#984ea3"]
-PANEL_KEYS = ["10 C", "20 C", "30 C"]
+PANEL_KEYS = ["10C", "20C", "30C"]
 CMAP_CAT = ListedColormap(CAT_COLORS)
 NORM_CAT = BoundaryNorm(np.arange(-0.5, 5.5, 1.0), CMAP_CAT.N)
 
